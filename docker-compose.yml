@@ -1,0 +1,38 @@
+﻿version: '3.7'
+
+services:
+  keto:
+    image: oryd/keto:latest
+    ports:
+      - "4466:4466"
+      - "4467:4467"
+    volumes:
+      - ./config:/etc/config/keto
+    command: serve --config /etc/config/keto/keto.yml
+    depends_on:
+      - postgres
+    networks:
+      - keto-network
+    environment:
+      - KETO_READ_REMOTE=0.0.0.0:4466
+      - KETO_WRITE_REMOTE=0.0.0.0:4467
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev_pass
+      POSTGRES_DB: keto
+    ports:
+      - "5432:5432"
+    networks:
+      - keto-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  keto-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
