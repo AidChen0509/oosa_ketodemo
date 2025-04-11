@@ -1,0 +1,621 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "照片事件關係管理API",
+      "description": "用於管理照片和事件之間關係的API",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "本地開發伺服器"
+      }
+    ],
+    "paths": {
+      "/api/photos/reference": {
+        "post": {
+          "summary": "創建照片和事件的reference關係",
+          "description": "建立照片和特定事件之間的reference關係",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "photo_id": {
+                      "type": "string",
+                      "description": "照片ID"
+                    },
+                    "event_id": {
+                      "type": "string",
+                      "description": "事件ID"
+                    }
+                  },
+                  "required": ["photo_id", "event_id"]
+                },
+                "example": {
+                  "photo_id": "photo1",
+                  "event_id": "event1"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "關係創建成功",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "照片和事件 reference 關係創建成功"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求格式錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/photos/polaroid": {
+        "post": {
+          "summary": "創建照片和事件的polaroid關係",
+          "description": "建立照片和特定事件之間的polaroid關係",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "photo_id": {
+                      "type": "string",
+                      "description": "照片ID"
+                    },
+                    "event_id": {
+                      "type": "string",
+                      "description": "事件ID"
+                    }
+                  },
+                  "required": ["photo_id", "event_id"]
+                },
+                "example": {
+                  "photo_id": "photo1",
+                  "event_id": "event1"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "關係創建成功",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "照片和事件 polaroid 關係創建成功"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求格式錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/photos/reference/batch": {
+        "post": {
+          "summary": "批量創建照片和事件的reference關係",
+          "description": "批量建立多個照片和事件之間的reference關係",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "relations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "photo_id": {
+                            "type": "string",
+                            "description": "照片ID"
+                          },
+                          "event_id": {
+                            "type": "string",
+                            "description": "事件ID"
+                          }
+                        },
+                        "required": ["photo_id", "event_id"]
+                      }
+                    }
+                  },
+                  "required": ["relations"]
+                },
+                "example": {
+                  "relations": [
+                    {
+                      "photo_id": "photo1",
+                      "event_id": "event1"
+                    },
+                    {
+                      "photo_id": "photo2",
+                      "event_id": "event1"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "關係批量創建成功",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "批量創建照片和事件 reference 關係成功",
+                    "count": 2
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求格式錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/photos/polaroid/batch": {
+        "post": {
+          "summary": "批量創建照片和事件的polaroid關係",
+          "description": "批量建立多個照片和事件之間的polaroid關係",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "relations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "photo_id": {
+                            "type": "string",
+                            "description": "照片ID"
+                          },
+                          "event_id": {
+                            "type": "string",
+                            "description": "事件ID"
+                          }
+                        },
+                        "required": ["photo_id", "event_id"]
+                      }
+                    }
+                  },
+                  "required": ["relations"]
+                },
+                "example": {
+                  "relations": [
+                    {
+                      "photo_id": "photo1",
+                      "event_id": "event1"
+                    },
+                    {
+                      "photo_id": "photo3",
+                      "event_id": "event1"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "關係批量創建成功",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "批量創建照片和事件 polaroid 關係成功",
+                    "count": 2
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求格式錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/photos/check": {
+        "get": {
+          "summary": "檢查權限",
+          "description": "檢查特定主體對特定對象的關係權限",
+          "parameters": [
+            {
+              "in": "query",
+              "name": "namespace",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "命名空間",
+              "example": "Photo"
+            },
+            {
+              "in": "query",
+              "name": "object",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "對象ID",
+              "example": "photo1"
+            },
+            {
+              "in": "query",
+              "name": "relation",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "關係類型",
+              "example": "reference"
+            },
+            {
+              "in": "query",
+              "name": "subject",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "主體ID",
+              "example": "event1"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "權限檢查結果",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "allowed": {
+                        "type": "boolean"
+                      },
+                      "details": {
+                        "type": "object",
+                        "properties": {
+                          "namespace": {
+                            "type": "string"
+                          },
+                          "object": {
+                            "type": "string"
+                          },
+                          "relation": {
+                            "type": "string"
+                          },
+                          "subject": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "allowed": true,
+                    "details": {
+                      "namespace": "Photo",
+                      "object": "photo1",
+                      "relation": "reference",
+                      "subject": "event1"
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求參數錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/events/{eventId}/photos/reference": {
+        "get": {
+          "summary": "獲取與事件相關的reference照片",
+          "description": "獲取與特定事件有reference關係的所有照片",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "eventId",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "事件ID",
+              "example": "event1"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "照片列表",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "photos": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "photos": ["photo1", "photo2"]
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求參數錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/events/{eventId}/photos/polaroid": {
+        "get": {
+          "summary": "獲取與事件相關的polaroid照片",
+          "description": "獲取與特定事件有polaroid關係的所有照片",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "eventId",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "事件ID",
+              "example": "event1"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "照片列表",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "photos": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "photos": ["photo1", "photo3"]
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求參數錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/photos/{photoId}/events": {
+        "get": {
+          "summary": "獲取與照片相關的事件",
+          "description": "獲取與特定照片有關係的所有事件",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "photoId",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "照片ID",
+              "example": "photo1"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "事件列表",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "events": {
+                        "type": "object",
+                        "properties": {
+                          "reference": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "polaroid": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "example": {
+                    "events": {
+                      "reference": ["event1"],
+                      "polaroid": ["event2"]
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求參數錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      },
+      "/api/photos/{photoId}/events/{eventId}/{relationType}": {
+        "delete": {
+          "summary": "刪除照片和事件之間的關係",
+          "description": "刪除照片和事件之間指定類型的關係",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "photoId",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "照片ID",
+              "example": "photo1"
+            },
+            {
+              "in": "path",
+              "name": "eventId",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "事件ID",
+              "example": "event1"
+            },
+            {
+              "in": "path",
+              "name": "relationType",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "enum": ["reference", "polaroid"]
+              },
+              "description": "關係類型",
+              "example": "reference"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "關係刪除成功",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "example": {
+                    "message": "成功刪除照片和事件的關係"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "請求參數錯誤"
+            },
+            "500": {
+              "description": "伺服器錯誤"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "PhotoEventRelation": {
+          "type": "object",
+          "properties": {
+            "photo_id": {
+              "type": "string",
+              "description": "照片ID"
+            },
+            "event_id": {
+              "type": "string",
+              "description": "事件ID"
+            }
+          },
+          "required": ["photo_id", "event_id"]
+        }
+      }
+    }
+  }

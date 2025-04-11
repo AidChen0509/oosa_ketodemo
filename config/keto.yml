@@ -1,9 +1,7 @@
 namespaces:
   - id: 0
-    name: User
-  - id: 1
     name: Photo
-  - id: 2
+  - id: 1
     name: Event
 
 dsn: postgres://postgres:dev_pass@postgres:5432/keto

@@ -3,20 +3,20 @@ package api
 import (
 	"net/http"
 
-	"github.com/AidChen0509/oosa_ketodemo/internal/auth"
+	"github.com/AidChen0509/oosa_ketosdk/keto"
 	"github.com/gin-gonic/gin"
 )
 
-// FriendRelationRequest 建立朋友關係的請求
-type FriendRelationRequest struct {
-	User1ID string `json:"user1_id" binding:"required"`
-	User2ID string `json:"user2_id" binding:"required"`
+// PhotoEventReferenceRequest 建立照片和事件 reference 關係的請求
+type PhotoEventReferenceRequest struct {
+	PhotoID string `json:"photo_id" binding:"required"`
+	EventID string `json:"event_id" binding:"required"`
 }
 
-// PhotoPermissionRequest 照片權限的請求
-type PhotoPermissionRequest struct {
+// PhotoEventPolaroidRequest 建立照片和事件 polaroid 關係的請求
+type PhotoEventPolaroidRequest struct {
 	PhotoID string `json:"photo_id" binding:"required"`
-	UserID  string `json:"user_id" binding:"required"`
+	EventID string `json:"event_id" binding:"required"`
 }
 
 // PermissionCheckRequest 權限檢查的請求
@@ -27,64 +27,58 @@ type PermissionCheckRequest struct {
 	Subject   string `form:"subject" binding:"required"`
 }
 
-// BatchFriendRelationRequest 批量建立朋友關係的請求
-type BatchFriendRelationRequest struct {
-	Relationships []FriendRelationship `json:"relationships" binding:"required,dive"`
+// BatchPhotoEventReferenceRequest 批量建立照片和事件 reference 關係的請求
+type BatchPhotoEventReferenceRequest struct {
+	Relations []PhotoEventRelation `json:"relations" binding:"required,dive"`
 }
 
-// BatchPhotoPermissionRequest 批量設置照片權限的請求
-type BatchPhotoPermissionRequest struct {
-	Permissions []PhotoPermission `json:"permissions" binding:"required,dive"`
+// BatchPhotoEventPolaroidRequest 批量建立照片和事件 polaroid 關係的請求
+type BatchPhotoEventPolaroidRequest struct {
+	Relations []PhotoEventRelation `json:"relations" binding:"required,dive"`
 }
 
-// FriendRelationship 朋友關係
-type FriendRelationship struct {
-	User1ID string `json:"user1_id" binding:"required"`
-	User2ID string `json:"user2_id" binding:"required"`
-}
-
-// PhotoPermission 照片權限
-type PhotoPermission struct {
+// PhotoEventRelation 照片和事件關係
+type PhotoEventRelation struct {
 	PhotoID string `json:"photo_id" binding:"required"`
-	UserID  string `json:"user_id" binding:"required"`
+	EventID string `json:"event_id" binding:"required"`
 }
 
-// 創建朋友關係
-func (s *Server) createFriendRelation(c *gin.Context) {
-	var req FriendRelationRequest
+// 創建照片和事件的 reference 關係
+func (s *Server) createPhotoEventReference(c *gin.Context) {
+	var req PhotoEventReferenceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := s.ketoClient.CreateFriendRelation(req.User1ID, req.User2ID)
+	err := s.ketoClient.CreatePhotoEventReference(req.PhotoID, req.EventID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "朋友關係創建成功"})
+	c.JSON(http.StatusOK, gin.H{"message": "照片和事件 reference 關係創建成功"})
 }
 
-// 創建照片權限
-func (s *Server) createPhotoPermission(c *gin.Context) {
-	var req PhotoPermissionRequest
+// 創建照片和事件的 polaroid 關係
+func (s *Server) createPhotoEventPolaroid(c *gin.Context) {
+	var req PhotoEventPolaroidRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := s.ketoClient.CreatePhotoViewPermission(req.PhotoID, req.UserID)
+	err := s.ketoClient.CreatePhotoEventPolaroid(req.PhotoID, req.EventID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "照片權限設置成功"})
+	c.JSON(http.StatusOK, gin.H{"message": "照片和事件 polaroid 關係創建成功"})
 }
 
 // 檢查權限
-func (s *Server) checkPhotoPermission(c *gin.Context) {
+func (s *Server) checkPermission(c *gin.Context) {
 	var req PermissionCheckRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -108,60 +102,136 @@ func (s *Server) checkPhotoPermission(c *gin.Context) {
 	})
 }
 
-// 批量創建朋友關係
-func (s *Server) batchCreateFriendRelations(c *gin.Context) {
-	var req BatchFriendRelationRequest
+// 批量創建照片和事件的 reference 關係
+func (s *Server) batchCreatePhotoEventReferences(c *gin.Context) {
+	var req BatchPhotoEventReferenceRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// 轉換為內部數據結構
-	relationships := make([]auth.FriendRelationship, len(req.Relationships))
-	for i, rel := range req.Relationships {
-		relationships[i] = auth.FriendRelationship{
-			User1ID: rel.User1ID,
-			User2ID: rel.User2ID,
+	relations := make([]keto.PhotoEventRelation, len(req.Relations))
+	for i, rel := range req.Relations {
+		relations[i] = keto.PhotoEventRelation{
+			PhotoID: rel.PhotoID,
+			EventID: rel.EventID,
 		}
 	}
 
-	err := s.ketoClient.BatchCreateFriendRelations(relationships)
+	err := s.ketoClient.BatchCreatePhotoEventReferences(relations)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "批量創建朋友關係成功",
-		"count":   len(req.Relationships),
+		"message": "批量創建照片和事件 reference 關係成功",
+		"count":   len(req.Relations),
 	})
 }
 
-// 批量設置照片權限
-func (s *Server) batchCreatePhotoPermissions(c *gin.Context) {
-	var req BatchPhotoPermissionRequest
+// 批量創建照片和事件的 polaroid 關係
+func (s *Server) batchCreatePhotoEventPolaroids(c *gin.Context) {
+	var req BatchPhotoEventPolaroidRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// 轉換為內部數據結構
-	permissions := make([]auth.PhotoPermission, len(req.Permissions))
-	for i, perm := range req.Permissions {
-		permissions[i] = auth.PhotoPermission{
-			PhotoID: perm.PhotoID,
-			UserID:  perm.UserID,
+	relations := make([]keto.PhotoEventRelation, len(req.Relations))
+	for i, rel := range req.Relations {
+		relations[i] = keto.PhotoEventRelation{
+			PhotoID: rel.PhotoID,
+			EventID: rel.EventID,
 		}
 	}
 
-	err := s.ketoClient.BatchCreatePhotoViewPermissions(permissions)
+	err := s.ketoClient.BatchCreatePhotoEventPolaroids(relations)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "批量設置照片權限成功",
-		"count":   len(req.Permissions),
+		"message": "批量創建照片和事件 polaroid 關係成功",
+		"count":   len(req.Relations),
 	})
+}
+
+// getEventReferencePhotos 獲取與特定事件有 reference 關係的所有照片
+func (s *Server) getEventReferencePhotos(c *gin.Context) {
+	eventID := c.Param("eventId")
+	if eventID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "事件ID不能為空"})
+		return
+	}
+
+	photos, err := s.ketoClient.GetEventReferencePhotos(eventID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "無法獲取照片: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"photos": photos})
+}
+
+// getEventPolaroidPhotos 獲取與特定事件有 polaroid 關係的所有照片
+func (s *Server) getEventPolaroidPhotos(c *gin.Context) {
+	eventID := c.Param("eventId")
+	if eventID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "事件ID不能為空"})
+		return
+	}
+
+	photos, err := s.ketoClient.GetEventPolaroidPhotos(eventID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "無法獲取照片: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"photos": photos})
+}
+
+// getPhotoEvents 獲取與特定照片有關係的所有事件
+func (s *Server) getPhotoEvents(c *gin.Context) {
+	photoID := c.Param("photoId")
+	if photoID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "照片ID不能為空"})
+		return
+	}
+
+	events, err := s.ketoClient.GetPhotoEvents(photoID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "無法獲取事件: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"events": events})
+}
+
+// deletePhotoEventRelation 刪除照片和事件之間的關係
+func (s *Server) deletePhotoEventRelation(c *gin.Context) {
+	photoID := c.Param("photoId")
+	eventID := c.Param("eventId")
+	relationType := c.Param("relationType")
+
+	if photoID == "" || eventID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "照片ID和事件ID不能為空"})
+		return
+	}
+
+	if relationType != "reference" && relationType != "polaroid" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "關係類型必須為 reference 或 polaroid"})
+		return
+	}
+
+	err := s.ketoClient.DeletePhotoEventRelation(photoID, eventID, relationType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "無法刪除關係: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "成功刪除照片和事件的關係"})
 }
